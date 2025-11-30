@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Ships from './pages/Ships';
+import ShipDetails from './pages/ShipDetails';
 import Login from './pages/Login';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="navios" element={<Ships />} />
+          <Route path="navios/:id" element={<ShipDetails />} />
         </Route>
       </Routes>
     </Router>
