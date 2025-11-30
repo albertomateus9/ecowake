@@ -1,0 +1,72 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ecowake_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ecowake_db
+      POSTGRES_USER: ecowake
+      POSTGRES_PASSWORD: ecowake_secure_2025
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecowake"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecowake_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecowake_backend
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://ecowake:ecowake_secure_2025@postgres:5432/ecowake_db
+      API_ENV: production
+      SECRET_KEY: your-secret-key-change-this-in-production
+      MODEL_PATH: /app/model.pkl
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
+    networks:
+      - ecowake_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    container_name: ecowake_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+    networks:
+      - ecowake_network
+
+networks:
+  ecowake_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
