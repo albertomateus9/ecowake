@@ -24,7 +24,11 @@ services:
       dockerfile: Dockerfile
     container_name: ecowake_backend
     environment:
-      DATABASE_URL: postgresql://ecowake:ecowake_secure_2025@postgres:5432/ecowake_db
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ecowake_db
+      DB_USER: ecowake
+      DB_PASSWORD: ecowake_secure_2025
       API_ENV: production
     ports:
       - "8000:8000"
@@ -34,11 +38,6 @@ services:
     networks:
       - ecowake_network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   nginx:
     image: nginx:alpine
