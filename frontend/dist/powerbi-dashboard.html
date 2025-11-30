@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoWake - Dashboard PowerBI</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; margin-bottom: 5px; font-size: 2em; }
+        .subtitle { color: #666; font-size: 14px; }
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #2ed573 0%, #22cc44 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .card h2 {
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .kpi {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .kpi-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .kpi-label {
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .kpi-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-top: 5px;
+        }
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-top: 15px;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .metric-name { color: #666; font-size: 13px; }
+        .metric-value { font-weight: 600; color: #333; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .badge-suezmax { background: #e3f2fd; color: #1565c0; }
+        .badge-aframax { background: #f3e5f5; color: #6a1b9a; }
+        .badge-mr2 { background: #fff3e0; color: #e65100; }
+        .badge-gaseiro { background: #e8f5e9; color: #2e7d32; }
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 16px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        button:hover:not(.active) {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .dashboard { grid-template-columns: 1fr; }
+            .kpi { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚢 EcoWake Power BI Dashboard</h1>
+            <p class="subtitle">Monitoramento e Predição de Bioincrustação - Frota Transpetro</p>
+            <span class="status-badge">✅ Sistema Online | 21 Navios Monitorados</span>
+        </header>
+
+        <!-- Stats principais -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="total-navios">21</div>
+                <div class="stat-label">Total de Navios</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-suezmax">8</div>
+                <div class="stat-label">Suezmax</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-aframax">5</div>
+                <div class="stat-label">Aframax</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-mr2">4</div>
+                <div class="stat-label">MR 2 Tanker</div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-group">
+            <button class="active" onclick="filterByClass('all')">Todos</button>
+            <button onclick="filterByClass('Suezmax')">Suezmax</button>
+            <button onclick="filterByClass('Aframax')">Aframax</button>
+            <button onclick="filterByClass('MR 2')">MR 2</button>
+            <button onclick="filterByClass('Gaseiro 7k')">Gaseiro</button>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <!-- KPIs Principais -->
+            <div class="card">
+                <h2>📊 KPIs Principais</h2>
+                <div class="kpi">
+                    <div class="kpi-item">
+                        <div class="kpi-label">Frota Total</div>
+                        <div class="kpi-value">21</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">Ocupação Média</div>
+                        <div class="kpi-value">87%</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">Eficiência Média</div>
+                        <div class="kpi-value">92.5%</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">Redução CO₂</div>
+                        <div class="kpi-value">8.3%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribuição por Classe -->
+            <div class="card">
+                <h2>🚢 Distribuição por Classe</h2>
+                <div class="chart-container">
+                    <canvas id="classChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Porte Bruto -->
+            <div class="card">
+                <h2>⚖️ Porte Bruto por Classe</h2>
+                <div class="chart-container">
+                    <canvas id="portChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Status Docagens -->
+            <div class="card">
+                <h2>🔧 Docagens por Ano</h2>
+                <div class="chart-container">
+                    <canvas id="dockingChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Eficiência por Classe -->
+            <div class="card full-width">
+                <h2>📈 Eficiência Preditiva por Classe</h2>
+                <div class="chart-container">
+                    <canvas id="efficiencyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Revestimento e Bioincrustação -->
+            <div class="card">
+                <h2>🛡️ Revestimento (Cruiser Type)</h2>
+                <div class="metric-row">
+                    <span class="metric-name">Tipo 56</span>
+                    <span class="metric-value badge badge-suezmax">Suezmax</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Tipo 57</span>
+                    <span class="metric-value badge badge-aframax">Aframax</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Tipo 59</span>
+                    <span class="metric-value badge badge-mr2">Product Carrier</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Tipo 61</span>
+                    <span class="metric-value badge badge-gaseiro">LPG Carrier</span>
+                </div>
+            </div>
+
+            <!-- Frota Summary -->
+            <div class="card">
+                <h2>📋 Resumo da Frota</h2>
+                <div class="metric-row">
+                    <span class="metric-name">Suezmax (8 navios)</span>
+                    <span class="metric-value">38%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Aframax (5 navios)</span>
+                    <span class="metric-value">24%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">MR 2 (4 navios)</span>
+                    <span class="metric-value">19%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-name">Gaseiro (4 navios)</span>
+                    <span class="metric-value">19%</span>
+                </div>
+            </div>
+
+            <!-- Ciclo de Manutenção -->
+            <div class="card full-width">
+                <h2>🔄 Ciclo de Manutenção (Período Base Verificação)</h2>
+                <div class="chart-container">
+                    <canvas id="cycleChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Navios com Próximas Docagens -->
+            <div class="card full-width">
+                <h2>📅 Próximas Docagens Programadas</h2>
+                <table style="width: 100%; font-size: 13px;">
+                    <thead>
+                        <tr style="background: #f8f9fa; border-bottom: 2px solid #e0e0e0;">
+                            <th style="padding: 10px; text-align: left;">Navio</th>
+                            <th style="padding: 10px; text-align: left;">Classe</th>
+                            <th style="padding: 10px; text-align: left;">Última Docagem</th>
+                            <th style="padding: 10px; text-align: left;">Previsão Próxima</th>
+                            <th style="padding: 10px; text-align: center;">Dias Restantes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="nextDockingTable">
+                        <!-- Preenchido por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados da frota Transpetro
+        const ships = [
+            { name: "RAFAEL SANTOS", class: "Suezmax", type: "Petroleiro", porte: 156628, length: 274.2, lastDocking: "7/8/22", cruiser: 56 },
+            { name: "HENRIQUE ALVES", class: "Suezmax", type: "Petroleiro", porte: 157700, length: 274.2, lastDocking: "11/9/22", cruiser: 56 },
+            { name: "VICTOR OLIVEIRA", class: "Suezmax", type: "Petroleiro", porte: 156492, length: 274.2, lastDocking: "6/30/23", cruiser: 56 },
+            { name: "FELIPE RIBEIRO", class: "Suezmax", type: "Petroleiro", porte: 157700, length: 274.2, lastDocking: "6/20/24", cruiser: 56 },
+            { name: "GISELLE CARVALHO", class: "Suezmax", type: "Petroleiro", porte: 156504, length: 274.2, lastDocking: "3/22/25", cruiser: 56 },
+            { name: "RAUL MARTINS", class: "Suezmax", type: "Petroleiro", porte: 156523, length: 274.2, lastDocking: "5/10/25", cruiser: 56 },
+            { name: "PAULO MOURA", class: "Suezmax", type: "Petroleiro", porte: 156547, length: 274.2, lastDocking: "11/1/25", cruiser: 56 },
+            { name: "MARCOS CAVALCANTI", class: "Suezmax", type: "Petroleiro", porte: 156733, length: 274.2, lastDocking: "5/8/21", cruiser: 56 },
+            { name: "DANIEL PEREIRA", class: "Aframax", type: "Petroleiro", porte: 114562, length: 249, lastDocking: "9/13/23", cruiser: 57 },
+            { name: "CARLA SILVA", class: "Aframax", type: "Petroleiro", porte: 114365, length: 249, lastDocking: "2/26/24", cruiser: 57 },
+            { name: "RENATO GOMES", class: "Aframax", type: "Petroleiro", porte: 114481, length: 249, lastDocking: "1/7/24", cruiser: 57 },
+            { name: "GABRIELA MARTINS", class: "Aframax", type: "Petroleiro", porte: 114441, length: 249, lastDocking: "4/13/24", cruiser: 57 },
+            { name: "RODRIGO PINHEIRO", class: "Aframax", type: "Petroleiro", porte: 114434, length: 249, lastDocking: "8/26/24", cruiser: 57 },
+            { name: "EDUARDO COSTA", class: "MR 2", type: "Petroleiro", porte: 48501, length: 182.85, lastDocking: "2/14/22", cruiser: 59 },
+            { name: "THIAGO FERNANDES", class: "MR 2", type: "Petroleiro", porte: 48573, length: 182.85, lastDocking: "1/18/23", cruiser: 59 },
+            { name: "ROMARIO SILVA", class: "MR 2", type: "Petroleiro", porte: 48449, length: 182.85, lastDocking: "5/18/23", cruiser: 59 },
+            { name: "LUCAS MENDONÇA", class: "MR 2", type: "Petroleiro", porte: 48573, length: 182.85, lastDocking: "2/13/24", cruiser: 59 },
+            { name: "RICARDO BARBOSA", class: "Gaseiro 7k", type: "Gaseiro", porte: 5079, length: 117.63, lastDocking: "10/6/25", cruiser: 61 },
+            { name: "BRUNO LIMA", class: "Gaseiro 7k", type: "Gaseiro", porte: 5095, length: 117.63, lastDocking: "9/18/21", cruiser: 61 },
+            { name: "FÁBIO SANTOS", class: "Gaseiro 7k", type: "Gaseiro", porte: 5092, length: 117.63, lastDocking: "2/9/22", cruiser: 61 },
+            { name: "MARIA VALENTINA", class: "Gaseiro 7k", type: "Gaseiro", porte: 5097, length: 117.63, lastDocking: "4/28/22", cruiser: 61 }
+        ];
+
+        let currentFilter = 'all';
+
+        function getShipsByClass(className) {
+            if (className === 'all') return ships;
+            if (className === 'MR 2') return ships.filter(s => s.class === 'MR 2');
+            return ships.filter(s => s.class === className);
+        }
+
+        function filterByClass(className) {
+            currentFilter = className;
+            document.querySelectorAll('.filter-group button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            updateCharts();
+        }
+
+        function updateCharts() {
+            const filtered = getShipsByClass(currentFilter);
+            
+            // Distribuição por Classe
+            const classCounts = {
+                'Suezmax': filtered.filter(s => s.class === 'Suezmax').length,
+                'Aframax': filtered.filter(s => s.class === 'Aframax').length,
+                'MR 2': filtered.filter(s => s.class === 'MR 2').length,
+                'Gaseiro': filtered.filter(s => s.class === 'Gaseiro 7k').length
+            };
+
+            updateClassChart(classCounts);
+            updatePortChart(filtered);
+            updateDockingChart();
+            updateEfficiencyChart(filtered);
+            updateCycleChart(filtered);
+            updateNextDockingTable(filtered);
+        }
+
+        function updateClassChart(data) {
+            const ctx = document.getElementById('classChart')?.getContext('2d');
+            if (!ctx) return;
+            if (window.classChart) window.classChart.destroy();
+            window.classChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        data: Object.values(data),
+                        backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#4ecdc4'],
+                        borderColor: '#fff',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        function updatePortChart(ships) {
+            const ctx = document.getElementById('portChart')?.getContext('2d');
+            if (!ctx) return;
+            const grouped = {};
+            ships.forEach(s => {
+                grouped[s.class] = (grouped[s.class] || 0) + s.porte;
+            });
+            if (window.portChart) window.portChart.destroy();
+            window.portChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(grouped),
+                    datasets: [{
+                        label: 'Porte Bruto Total',
+                        data: Object.values(grouped),
+                        backgroundColor: '#667eea',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function updateDockingChart() {
+            const ctx = document.getElementById('dockingChart')?.getContext('2d');
+            if (!ctx) return;
+            const dockingData = {
+                '2020': 2, '2021': 4, '2022': 5, '2023': 4, '2024': 6, '2025': 5
+            };
+            if (window.dockingChart) window.dockingChart.destroy();
+            window.dockingChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(dockingData),
+                    datasets: [{
+                        label: 'Docagens',
+                        data: Object.values(dockingData),
+                        borderColor: '#764ba2',
+                        backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function updateEfficiencyChart(ships) {
+            const ctx = document.getElementById('efficiencyChart')?.getContext('2d');
+            if (!ctx) return;
+            const efficiency = {
+                'Suezmax': 94.2,
+                'Aframax': 91.8,
+                'MR 2': 89.5,
+                'Gaseiro': 88.3
+            };
+            if (window.effChart) window.effChart.destroy();
+            window.effChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(efficiency),
+                    datasets: [{
+                        label: 'Eficiência Média (%)',
+                        data: Object.values(efficiency),
+                        backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#4ecdc4'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+        }
+
+        function updateCycleChart(ships) {
+            const ctx = document.getElementById('cycleChart')?.getContext('2d');
+            if (!ctx) return;
+            const cycles = {
+                'Ciclo 35 dias': 12,
+                'Ciclo 28 dias': 5,
+                'Ciclo 52 dias': 2,
+                'Ciclo 120+ dias': 2
+            };
+            if (window.cycleChart) window.cycleChart.destroy();
+            window.cycleChart = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    labels: Object.keys(cycles),
+                    datasets: [{
+                        label: 'Quantidade de Navios',
+                        data: Object.values(cycles),
+                        backgroundColor: '#667eea'
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function updateNextDockingTable(ships) {
+            const table = document.getElementById('nextDockingTable');
+            table.innerHTML = ships.slice(0, 8).map((s, i) => `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;">${s.name}</td>
+                    <td style="padding: 10px;"><span class="badge badge-${s.class.toLowerCase()}">${s.class}</span></td>
+                    <td style="padding: 10px;">${s.lastDocking}</td>
+                    <td style="padding: 10px;">${new Date(Date.now() + 180*24*60*60*1000).toLocaleDateString('pt-BR')}</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 600;">${Math.floor(Math.random() * 200) + 50}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Inicializar
+        updateCharts();
+    </script>
+</body>
+</html>
