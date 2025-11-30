@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
-"""
-Download automático de CSVs da Transpetro
-"""
+"""Download automático de CSVs da Transpetro do Google Drive"""
 import os
 import requests
-from urllib.parse import urlparse
+import sys
 
-# IDs dos arquivos no Google Drive (extraído dos links compartilhados)
 FILES = {
     "BRUNO LIMA.csv": "1KlJYqseMH5mGK7rbQ4dbbX7hKXy5R0Tb",
     "CARLA SILVA.csv": "1va7V28ELBNrEKwrXPKfnlvO2n6GJBUsc",
@@ -34,43 +31,43 @@ OUTPUT_DIR = "/app/data/ais"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def download_from_gdrive(file_id, output_path):
-    """Download arquivo do Google Drive"""
+    """Download do Google Drive"""
     url = f"https://drive.google.com/uc?export=download&id={file_id}"
     
     try:
-        print(f"📥 Baixando {os.path.basename(output_path)}...", end=" ", flush=True)
+        filename = os.path.basename(output_path)
+        print(f"📥 Baixando {filename}...", end=" ", flush=True, file=sys.stderr)
         
         session = requests.Session()
-        response = session.get(url, stream=True)
+        response = session.get(url, stream=True, timeout=30)
         
         if response.status_code == 200:
             with open(output_path, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
                         f.write(chunk)
-            print("✅")
+            print("✅", file=sys.stderr)
             return True
         else:
-            print(f"❌ (Status {response.status_code})")
+            print(f"❌ (HTTP {response.status_code})", file=sys.stderr)
             return False
     except Exception as e:
-        print(f"❌ Erro: {e}")
+        print(f"❌ Erro: {e}", file=sys.stderr)
         return False
 
 if __name__ == "__main__":
-    print("╔════════════════════════════════════════════╗")
-    print("║  📥 Download de Dados AIS - Transpetro   ║")
-    print("╚════════════════════════════════════════════╝\n")
+    print("╔════════════════════════════════════════════╗", file=sys.stderr)
+    print("║  📥 Download AIS - Transpetro            ║", file=sys.stderr)
+    print("╚════════════════════════════════════════════╝\n", file=sys.stderr)
     
     success = 0
     for filename, file_id in FILES.items():
         output_path = os.path.join(OUTPUT_DIR, filename)
         if os.path.exists(output_path):
-            print(f"⏭️  {filename} já existe, pulando...")
+            print(f"⏭️  {filename} já existe", file=sys.stderr)
             success += 1
         else:
             if download_from_gdrive(file_id, output_path):
                 success += 1
     
-    print(f"\n✅ {success}/{len(FILES)} arquivos")
-    print(f"📂 Salvos em: {OUTPUT_DIR}")
+    print(f"\n✅ {success}/{len(FILES)} arquivos\n", file=sys.stderr)
