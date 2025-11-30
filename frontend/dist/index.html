@@ -3,75 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoWake - Monitoramento de Bioincrustação</title>
+    <title>EcoWake Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 20px;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        header {
             background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        h1 { color: #333; margin-bottom: 20px; }
-        .logo { font-size: 48px; margin-bottom: 20px; }
-        .status { 
-            display: inline-block;
-            padding: 10px 20px;
-            background: #2ed573;
-            color: white;
-            border-radius: 20px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        .info {
-            margin-top: 30px;
-            text-align: left;
-            background: #f8f9fa;
             padding: 20px;
             border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .info h2 { color: #667eea; margin-bottom: 15px; }
-        .info p { margin: 10px 0; color: #666; }
-        .links {
-            margin-top: 30px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        a {
+        h1 { color: #333; margin-bottom: 10px; }
+        .status-badge {
             display: inline-block;
-            padding: 10px 20px;
+            background: #2ed573;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .metric-label { color: #666; }
+        .metric-value { font-weight: bold; color: #333; }
+        .alert-critical { color: #ff4444; }
+        .alert-warning { color: #ffaa00; }
+        .alert-normal { color: #22cc44; }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .refresh-btn {
             background: #667eea;
             color: white;
-            text-decoration: none;
-            border-radius: 8px;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
         }
-        a:hover { background: #764ba2; }
+        .refresh-btn:hover {
+            background: #764ba2;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">🚢</div>
-        <h1>EcoWake</h1>
-        <p style="font-size: 18px; color: #666; margin-bottom: 20px;">
-            Monitoramento Preditivo de Bioincrustação
-        </p>
-        <div class="status">✅ Sistema Online</div>
-        <div class="links">
-            <a href="/api/docs">📚 API Documentation</a>
-            <a href="/api/health">🏥 Health Check</a>
+        <header>
+            <h1>🚢 EcoWake Dashboard</h1>
+            <p>Monitoramento Preditivo de Bioincrustação em Embarcações</p>
+            <span class="status-badge">✅ Sistema Online</span>
+            <button class="refresh-btn" onclick="loadData()">🔄 Atualizar</button>
+        </header>
+
+        <div id="error-container"></div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2>📊 Estatísticas Gerais</h2>
+                <div class="metric">
+                    <span class="metric-label">Total de Navios:</span>
+                    <span class="metric-value" id="ship-count">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Predições Ativas:</span>
+                    <span class="metric-value" id="prediction-count">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Taxa Média Eficiência:</span>
+                    <span class="metric-value" id="avg-efficiency">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Alertas Críticos:</span>
+                    <span class="metric-value alert-critical" id="critical-count">-</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🏥 Status do Sistema</h2>
+                <div class="metric">
+                    <span class="metric-label">Banco de Dados:</span>
+                    <span class="metric-value alert-normal" id="db-status">Conectando...</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">API Backend:</span>
+                    <span class="metric-value alert-normal" id="api-status">Conectando...</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Última Atualização:</span>
+                    <span class="metric-value" id="last-update">-</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚠️ Alertas</h2>
+                <div id="alerts-container">
+                    <div class="loading">Carregando alertas...</div>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2>📈 Índice de Eficiência por Navio</h2>
+                <div class="chart-container">
+                    anvas id="efficiencyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2>🌊 Nível de Bioincrustação</h2>
+                <div class="chart-container">
+                    anvas id="foulingChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2>🚢 Frota Monitorada</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f5f5f5; border-bottom: 2px solid #667eea;">
+                            <th style="padding: 10px; text-align: left;">ID</th>
+                            <th style="padding: 10px; text-align: left;">Nome</th>
+                            <th style="padding: 10px; text-align: left;">Classe</th>
+                            <th style="padding: 10px; text-align: left;">Bioincrustação</th>
+                            <th style="padding: 10px; text-align: left;">Eficiência</th>
+                            <th style="padding: 10px; text-align: left;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ships-table">
+                        <tr><td colspan="6" style="padding: 20px; text-align: center;" class="loading">Carregando dados...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    <script>
+        let efficiencyChart, foulingChart;
+
+        async function loadData() {
+            try {
+                document.getElementById('error-container').innerHTML = '';
+                try {
+                    const healthRes = await fetch('/api/health');
+                    document.getElementById('api-status').textContent = healthRes.ok ? '✅ Online' : '❌ Offline';
+                    document.getElementById('db-status').textContent = healthRes.ok ? '✅ Conectado' : '❌ Desconectado';
+                } catch (e) {
+                    document.getElementById('api-status').textContent = '❌ Erro';
+                    document.getElementById('db-status').textContent = '❌ Erro';
+                }
+
+                const predRes = await fetch('/api/predictions');
+                const predData = predRes.ok ? await predRes.json() : { predictions: [] };
+                const predictions = predData.predictions || [];
+
+                const shipCount = new Set(predictions.map(p => p.ship_id)).size;
+                document.getElementById('ship-count').textContent = shipCount;
+                document.getElementById('prediction-count').textContent = predictions.length;
+
+                const avgEff = predictions.length > 0 
+                    ? (predictions.reduce((a, b) => a + b.efficiency_index, 0) / predictions.length).toFixed(1)
+                    : 0;
+                document.getElementById('avg-efficiency').textContent = avgEff + '%';
+
+                const criticalCount = predictions.filter(p => p.alert_status === 'critical').length;
+                document.getElementById('critical-count').textContent = criticalCount;
+
+                document.getElementById('last-update').textContent = new Date().toLocaleTimeString('pt-BR');
+
+                const alertsContainer = document.getElementById('alerts-container');
+                const criticalPreds = predictions.filter(p => p.alert_status === 'critical');
+                const warningPreds = predictions.filter(p => p.alert_status === 'warning');
+
+                if (criticalPreds.length === 0 && warningPreds.length === 0) {
+                    alertsContainer.innerHTML = '<div style="color: #22cc44;">✅ Nenhum alerta no momento</div>';
+                } else {
+                    alertsContainer.innerHTML = '';
+                    criticalPreds.forEach(p => {
+                        alertsContainer.innerHTML += `<div class="alert-critical">🔴 CRÍTICO: ${p.ship_name} - Fouling: ${p.fouling_level}</div>`;
+                    });
+                    warningPreds.forEach(p => {
+                        alertsContainer.innerHTML += `<div class="alert-warning">🟡 AVISO: ${p.ship_name} - Fouling: ${p.fouling_level}</div>`;
+                    });
+                }
+
+                updateCharts(predictions);
+                updateTable(predictions);
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('error-container').innerHTML = 
+                    `<div class="error">⚠️ Erro ao carregar dados: ${error.message}</div>`;
+            }
+        }
+
+        function updateCharts(predictions) {
+            const shipNames = [...new Set(predictions.map(p => p.ship_name))];
+            const efficiencies = shipNames.map(name => {
+                const pred = predictions.find(p => p.ship_name === name);
+                return pred ? pred.efficiency_index : 0;
+            });
+            const foulings = shipNames.map(name => {
+                const pred = predictions.find(p => p.ship_name === name);
+                return pred ? pred.fouling_level : 0;
+            });
+
+            const effCtx = document.getElementById('efficiencyChart')?.getContext('2d');
+            if (effCtx) {
+                if (efficiencyChart) efficiencyChart.destroy();
+                efficiencyChart = new Chart(effCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: shipNames,
+                        datasets: [{
+                            label: 'Índice de Eficiência (%)',
+                            data: efficiencies,
+                            backgroundColor: '#667eea',
+                            borderColor: '#764ba2',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, max: 100 } }
+                    }
+                });
+            }
+
+            const fouCtx = document.getElementById('foulingChart')?.getContext('2d');
+            if (fouCtx) {
+                if (foulingChart) foulingChart.destroy();
+                foulingChart = new Chart(fouCtx, {
+                    type: 'line',
+                    data: {
+                        labels: shipNames,
+                        datasets: [{
+                            label: 'Nível de Bioincrustação',
+                            data: foulings,
+                            borderColor: '#ff6b6b',
+                            backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                            borderWidth: 2,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+        }
+
+        function updateTable(predictions) {
+            const tbody = document.getElementById('ships-table');
+            if (predictions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="padding: 20px; text-align: center;">Nenhum dado disponível</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = predictions.map(p => `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px;">${p.ship_id}</td>
+                    <td style="padding: 10px;">${p.ship_name}</td>
+                    <td style="padding: 10px;">${p.ship_class}</td>
+                    <td style="padding: 10px;"><span class="alert-${p.fouling_level > 3 ? 'critical' : 'normal'}">${p.fouling_level.toFixed(2)}</span></td>
+                    <td style="padding: 10px;"><span class="alert-${p.efficiency_index < 90 ? 'warning' : 'normal'}">${p.efficiency_index.toFixed(1)}%</span></td>
+                    <td style="padding: 10px;"><span class="alert-${p.alert_status}">${p.alert_status.toUpperCase()}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
 </body>
 </html>
+DASHEOF
+
+# Verificar que foi criado
+echo "✅ Dashboard criado:"
+ls -lh frontend/dist/index.html
+
+# Reiniciar nginx para servir o novo arquivo
+docker-compose restart nginx
+
+# Testar
+echo ""
+echo "✅ Acesse: https://ecowake.online"
