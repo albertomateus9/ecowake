@@ -4,6 +4,7 @@ import {
   Ship, 
   Calendar, 
   Lightbulb, 
+  BarChart3,
   Settings,
   FileText
 } from 'lucide-react';
@@ -13,6 +14,7 @@ const menuItems = [
   { icon: Ship, label: 'Navios', path: '/navios' },
   { icon: Calendar, label: 'Agendamentos', path: '/agendamentos' },
   { icon: Lightbulb, label: 'Recomendações', path: '/recomendacoes' },
+  { icon: BarChart3, label: 'Cenários', path: '/cenarios' },
 ];
 
 const adminItems = [

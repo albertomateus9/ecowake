@@ -3,6 +3,9 @@ import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Ships from './pages/Ships';
 import ShipDetails from './pages/ShipDetails';
+import Scheduling from './pages/Scheduling';
+import Recommendations from './pages/Recommendations';
+import Scenarios from './pages/Scenarios';
 import Login from './pages/Login';
 
 function App() {
@@ -16,6 +19,9 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="navios" element={<Ships />} />
           <Route path="navios/:id" element={<ShipDetails />} />
+          <Route path="agendamentos" element={<Scheduling />} />
+          <Route path="recomendacoes" element={<Recommendations />} />
+          <Route path="cenarios" element={<Scenarios />} />
         </Route>
       </Routes>
     </Router>
