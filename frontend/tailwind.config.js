@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -7,22 +6,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#60A5FA',
-          100: '#3C61BA',
-          200: '#1B2C54',
-          DEFAULT: '#182850',
-        },
-        success: '#4ADE80',
-        warning: '#FACC15',
-        alert: '#F97316',
-        critical: '#EF4444',
-        background: '#111B37',
-        surface: '#F3F4F6',
-      },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-      },
+        teal: {
+          50: '#f0f9fb',
+          100: '#e0f2f7',
+          500: '#2180c5',
+          600: '#1d7480',
+          700: '#1a6873',
+        }
+      }
     },
   },
   plugins: [],

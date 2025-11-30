@@ -1,29 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-@layer base {
-  * {
-    @apply box-border m-0 p-0;
-  }
-  
-  body {
-    @apply font-sans bg-gray-50 text-gray-900 antialiased;
-  }
-}
-
-@layer components {
-  ::-webkit-scrollbar {
-    @apply w-2;
-  }
-  
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    @apply bg-primary-100 rounded-full;
-  }
-}
