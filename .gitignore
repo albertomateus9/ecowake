@@ -26,3 +26,17 @@ Thumbs.db
 
 # Logs
 *.log
+# Dados AIS
+backend/data/ais/*.csv
+data/postgres/
+
+# Environment
+.env
+.env.local
+
+# Certificados
+nginx/ssl/
+
+# Cache
+__pycache__/
+*.pyc

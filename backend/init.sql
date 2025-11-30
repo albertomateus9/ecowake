@@ -48,3 +48,22 @@ CREATE INDEX IF NOT EXISTS idx_ships_status ON ships(status);
 CREATE INDEX IF NOT EXISTS idx_ships_biofouling ON ships(biofouling_level);
 CREATE INDEX IF NOT EXISTS idx_maintenance_ship_id ON maintenance_schedules(ship_id);
 CREATE INDEX IF NOT EXISTS idx_recommendations_ship_id ON recommendations(ship_id);
+
+-- Adicionar campos para dados AIS
+ALTER TABLE ships ADD COLUMN IF NOT EXISTS last_latitude DECIMAL(10, 8);
+ALTER TABLE ships ADD COLUMN IF NOT EXISTS last_longitude DECIMAL(11, 8);
+ALTER TABLE ships ADD COLUMN IF NOT EXISTS last_update TIMESTAMP;
+
+-- Criar tabela de histórico AIS
+CREATE TABLE IF NOT EXISTS ais_history (
+    id SERIAL PRIMARY KEY,
+    ship_id INT NOT NULL REFERENCES ships(id),
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
+    speed DECIMAL(10, 2),
+    heading INT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_ais_history_ship_id ON ais_history(ship_id);
+CREATE INDEX IF NOT EXISTS idx_ais_history_timestamp ON ais_history(timestamp);
