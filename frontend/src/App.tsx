@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Details from './pages/Details';
+import Appointments from './pages/Appointments';
 import './App.css';
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/details/:shipId" element={<Details />} />
+        <Route path="/appointments" element={<Appointments />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
