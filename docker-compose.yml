@@ -5,32 +5,39 @@ services:
     image: postgres:15-alpine
     container_name: ecowake_postgres
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ecowake
+      POSTGRES_PASSWORD: ecowake_secure_2025
       POSTGRES_DB: ecowake_db
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - ecowake_network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ecowake"]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - ecowake_network
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: ecowake_backend
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/ecowake_db
-    ports:
-      - "8000:8000"
+      DATABASE_URL: postgresql://ecowake:ecowake_secure_2025@postgres:5432/ecowake_db
+      API_ENV: production
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - ecowake_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   nginx:
     image: nginx:alpine
@@ -46,9 +53,7 @@ services:
       - backend
     networks:
       - ecowake_network
-
-volumes:
-  postgres_data:
+    restart: unless-stopped
 
 networks:
   ecowake_network:
