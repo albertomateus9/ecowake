@@ -1,7 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from contextlib import contextmanager
+import os
 
-app = FastAPI(title="EcoWake API", version="1.0.0")
+app = FastAPI(
+    title="EcoWake API",
+    version="1.0.0",
+    description="API de monitoramento de bioincrustação"
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -11,22 +19,105 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+DB_CONFIG = {
+    "host": os.getenv("DB_HOST", "postgres"),
+    "port": int(os.getenv("DB_PORT", 5432)),
+    "database": os.getenv("DB_NAME", "ecowake_db"),
+    "user": os.getenv("DB_USER", "ecowake"),
+    "password": os.getenv("DB_PASSWORD", "ecowake_secure_2025")
+}
+
+@contextmanager
+def get_db_connection():
+    conn = psycopg2.connect(**DB_CONFIG)
+    try:
+        yield conn
+    finally:
+        conn.close()
+
 @app.get("/")
-def root():
-    return {"status": "ok", "service": "EcoWake API"}
+async def root():
+    return {
+        "service": "EcoWake API",
+        "version": "1.0.0",
+        "status": "running"
+    }
 
 @app.get("/health")
-def health():
-    return {"status": "healthy"}
+async def health():
+    try:
+        with get_db_connection() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT 1")
+            cur.close()
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Database error: {str(e)}")
 
 @app.get("/api/ships")
-def ships():
-    return {
-        "ships": [
-            {"id": 1, "name": "RAFAEL SANTOS", "status": "Operando", "biofouling_level": 2, "fuel_consumption": 45.5, "speed": 14.2},
-            {"id": 2, "name": "TRANSPETRO BRASIL", "status": "Manutenção", "biofouling_level": 3, "fuel_consumption": 52.1, "speed": 0},
-            {"id": 3, "name": "OCEANO EXPRESS", "status": "Operando", "biofouling_level": 1, "fuel_consumption": 38.2, "speed": 16.5},
-            {"id": 4, "name": "SUEZMAX 01", "status": "Operando", "biofouling_level": 2, "fuel_consumption": 48.9, "speed": 15.1}
-        ],
-        "total": 4
-    }
+async def get_ships():
+    try:
+        with get_db_connection() as conn:
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            cur.execute("""
+                SELECT 
+                    id, name, status, biofouling_level, 
+                    fuel_consumption, speed, created_at
+                FROM ships
+                ORDER BY id
+            """)
+            ships = cur.fetchall()
+            cur.close()
+        
+        return {
+            "ships": [dict(s) for s in ships],
+            "total": len(ships),
+            "success": True
+        }
+    except Exception as e:
+        return {
+            "ships": [],
+            "total": 0,
+            "success": False,
+            "error": str(e)
+        }
+
+@app.get("/api/ships/{ship_id}")
+async def get_ship(ship_id: int):
+    try:
+        with get_db_connection() as conn:
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            cur.execute("SELECT * FROM ships WHERE id = %s", (ship_id,))
+            ship = cur.fetchone()
+            cur.close()
+        
+        if not ship:
+            raise HTTPException(status_code=404, detail="Ship not found")
+        
+        return dict(ship)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/recommendations")
+async def get_recommendations():
+    try:
+        with get_db_connection() as conn:
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            cur.execute("""
+                SELECT id, ship_id, recommendation, priority, created_at
+                FROM recommendations
+                ORDER BY priority DESC, created_at DESC
+            """)
+            recs = cur.fetchall()
+            cur.close()
+        
+        return {
+            "recommendations": [dict(r) for r in recs],
+            "total": len(recs)
+        }
+    except Exception as e:
+        return {"error": str(e), "recommendations": []}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
