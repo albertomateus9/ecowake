@@ -81,6 +81,14 @@
             margin-top: 0.25rem;
         }
 
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
         .status-badge {
             background: rgba(46, 196, 255, 0.1);
             border: 1px solid #2ec4ff;
@@ -102,6 +110,26 @@
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 700;
+        }
+
+        .classifier-btn {
+            background: linear-gradient(135deg, #2ec4ff, #1bb4ea);
+            color: #0a1a2a;
+            padding: 0.65rem 1.25rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(46, 196, 255, 0.3);
+        }
+
+        .classifier-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 196, 255, 0.5);
         }
 
         .pulse {
@@ -390,6 +418,16 @@
             .team-grid {
                 grid-template-columns: 1fr;
             }
+
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .classifier-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -415,7 +453,11 @@
                     <div class="logo-sub">Monitoramento Inteligente de Bioincrustação</div>
                 </div>
             </div>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <div class="header-actions">
+                <a href="/maintenance.html" class="classifier-btn">
+                    <i class="fas fa-camera"></i>
+                    Classificador de Bioincrustação
+                </a>
                 <div class="team-number">
                     <i class="fas fa-users"></i> Equipe 374
                 </div>
