@@ -3,27 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoWake - Dashboard Transpetro</title>
+    <title>EcoWake - Dashboard Transpetro | Equipe 374</title>
     
     <!-- Favicon SVG -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%232ec4ff'/%3E%3Cstop offset='100%25' style='stop-color:%231bb4ea'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23g)'/%3E%3Cpath d='M20,50 Q30,35 40,50 T60,50 Q70,35 80,50' stroke='white' stroke-width='3' fill='none'/%3E%3Cpath d='M15,60 Q25,45 35,60 T55,60 Q65,45 75,60' stroke='white' stroke-width='2.5' fill='none' opacity='0.7'/%3E%3C/svg%3E">
     
     <!-- Meta Tags -->
-    <meta name="description" content="EcoWake - Monitoramento Inteligente de Bioincrustação em Embarcações. Solução de IA para redução de consumo de combustível e emissões. Hackathon Transpetro 2025.">
-    <meta name="keywords" content="bioincrustação, transpetro, sustentabilidade, IA, navios, ecowake">
-    <meta name="author" content="Prof. MSc Alberto Mateus">
-    
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://ecowake.online">
-    <meta property="og:title" content="EcoWake - Monitoramento Inteligente de Bioincrustação">
-    <meta property="og:description" content="Solução de IA para redução de até 10% no consumo de combustível e 15% nas emissões de CO₂ em embarcações.">
-    <meta property="og:image" content="https://ecowake.online/images/og-image.png">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="EcoWake - Monitoramento Inteligente de Bioincrustação">
-    <meta name="twitter:description" content="Solução de IA para sustentabilidade marítima">
+    <meta name="description" content="EcoWake - Equipe 374 | Monitoramento Inteligente de Bioincrustação. Solução de IA para Hackathon Transpetro 2025.">
+    <meta name="keywords" content="bioincrustação, transpetro, ecowake, equipe 374, hackathon">
+    <meta name="author" content="Equipe 374 - EcoWake">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -106,6 +94,16 @@
             gap: 0.5rem;
         }
 
+        .team-number {
+            background: rgba(46, 196, 255, 0.15);
+            border: 1px solid #2ec4ff;
+            color: #2ec4ff;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
         .pulse {
             width: 8px;
             height: 8px;
@@ -125,6 +123,20 @@
             max-width: 1800px;
             width: 100%;
             margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            color: #2ec4ff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
         .dashboard-wrapper {
@@ -229,6 +241,99 @@
             font-weight: 500;
         }
 
+        /* Video Section */
+        .video-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background: #0a1a2a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .team-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(46, 196, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(46, 196, 255, 0.1);
+        }
+
+        .team-member-name {
+            color: #2ec4ff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member-role {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .team-member-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+
+        .contact-item i {
+            color: #2ec4ff;
+            width: 16px;
+        }
+
+        .linkedin-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 119, 181, 0.15);
+            border: 1px solid rgba(0, 119, 181, 0.3);
+            color: #0077b5;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .linkedin-btn:hover {
+            background: rgba(0, 119, 181, 0.25);
+            transform: translateX(5px);
+        }
+
         footer {
             background: rgba(0, 0, 0, 0.4);
             color: rgba(255, 255, 255, 0.5);
@@ -256,6 +361,7 @@
             .header-content {
                 flex-direction: column;
                 gap: 1rem;
+                text-align: center;
             }
 
             .logo-svg {
@@ -271,14 +377,18 @@
                 padding: 1rem;
             }
 
+            .section-title {
+                font-size: 1.4rem;
+            }
+
             .dashboard-header {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
             }
 
-            .iframe-container {
-                padding-bottom: 75%;
+            .team-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -287,7 +397,6 @@
     <header>
         <div class="header-content">
             <div class="brand">
-                <!-- Logo SVG Inline -->
                 <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -306,62 +415,199 @@
                     <div class="logo-sub">Monitoramento Inteligente de Bioincrustação</div>
                 </div>
             </div>
-            <div class="status-badge">
-                <span class="pulse"></span>
-                <span>Dashboard Ao Vivo</span>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                <div class="team-number">
+                    <i class="fas fa-users"></i> Equipe 374
+                </div>
+                <div class="status-badge">
+                    <span class="pulse"></span>
+                    <span>Ao Vivo</span>
+                </div>
             </div>
         </div>
     </header>
 
     <main>
-        <div class="dashboard-wrapper">
-            <div class="dashboard-header">
-                <h2 class="dashboard-title">
-                    <i class="fas fa-chart-line"></i>
-                    Dashboard Transpetro
-                </h2>
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">
-                    <i class="fas fa-expand"></i>
-                    Tela Cheia
-                </button>
-            </div>
-            
-            <div class="iframe-container" id="dashboard">
-                <div class="loading-overlay" id="loading">
-                    <div class="loading-spinner"></div>
-                    <div class="loading-text">Carregando Dashboard Power BI...</div>
+        <!-- Dashboard Power BI - PRINCIPAL -->
+        <section class="section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line"></i>
+                Dashboard Power BI
+            </h2>
+            <div class="dashboard-wrapper">
+                <div class="dashboard-header">
+                    <h3 class="dashboard-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Análise em Tempo Real
+                    </h3>
+                    <button class="fullscreen-btn" onclick="toggleFullscreen('dashboard')">
+                        <i class="fas fa-expand"></i>
+                        Tela Cheia
+                    </button>
                 </div>
-                <iframe 
-                    id="powerbi"
-                    title="EcoWake Dashboard - Transpetro"
-                    src="https://app.powerbi.com/view?r=eyJrIjoiY2VhMDZkM2YtY2RjMS00MDE5LWJmYWMtMGU5Zjc1MDlmOTY4IiwidCI6ImFkYWMzNzYyLWYzMWQtNDliNS1iYWI1LWY3NjcxNzZmZjQyNSJ9"
-                    frameborder="0"
-                    allowFullScreen="true"
-                    onload="hideLoading()">
-                </iframe>
+                
+                <div class="iframe-container" id="dashboard">
+                    <div class="loading-overlay" id="loading-dashboard">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Carregando Dashboard Power BI...</div>
+                    </div>
+                    <iframe 
+                        id="powerbi"
+                        title="EcoWake Dashboard - Transpetro"
+                        src="https://app.powerbi.com/view?r=eyJrIjoiY2VhMDZkM2YtY2RjMS00MDE5LWJmYWMtMGU5Zjc1MDlmOTY4IiwidCI6ImFkYWMzNzYyLWYzMWQtNDliNS1iYWI1LWY3NjcxNzZmZjQyNSJ9"
+                        frameborder="0"
+                        allowFullScreen="true"
+                        onload="hideLoading('loading-dashboard')">
+                    </iframe>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <!-- Vídeo do Pitch -->
+        <section class="section">
+            <h2 class="section-title">
+                <i class="fas fa-video"></i>
+                Pitch - Hackathon Transpetro
+            </h2>
+            <div class="video-wrapper">
+                <div class="video-container">
+                    <iframe 
+                        src="https://www.youtube.com/embed/Hys0bKIIbQM"
+                        title="HACKATHON TRANSPETRO - EQUIPE 374 - ECOWAKE"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Equipe -->
+        <section class="section">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i>
+                Nossa Equipe - 374
+            </h2>
+            <div class="team-grid">
+                <!-- Membro 1 -->
+                <div class="team-card">
+                    <div class="team-member-name">Alberto Mateus Pinheiro da Gama</div>
+                    <div class="team-member-role">Engenheiro de Infraestrutura</div>
+                    <div class="team-member-contact">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>albertomateus9@yahoo.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>(91) 98906-8747</span>
+                        </div>
+                    </div>
+                    <a href="https://www.linkedin.com/in/alberto-mateus-10b858146/" target="_blank" rel="noopener noreferrer" class="linkedin-btn">
+                        <i class="fab fa-linkedin"></i>
+                        Conectar no LinkedIn
+                    </a>
+                </div>
+
+                <!-- Membro 2 -->
+                <div class="team-card">
+                    <div class="team-member-name">Dryele dos Santos Cardoso Araújo</div>
+                    <div class="team-member-role">Designer</div>
+                    <div class="team-member-contact">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>dryelecardoso@gmail.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>(11) 95334-9254</span>
+                        </div>
+                    </div>
+                    <a href="https://www.linkedin.com/in/dryele-ara%C3%BAjo-570837397/" target="_blank" rel="noopener noreferrer" class="linkedin-btn">
+                        <i class="fab fa-linkedin"></i>
+                        Conectar no LinkedIn
+                    </a>
+                </div>
+
+                <!-- Membro 3 -->
+                <div class="team-card">
+                    <div class="team-member-name">Rafaella Guimarães Venturini</div>
+                    <div class="team-member-role">Engenheira de Dados e ML</div>
+                    <div class="team-member-contact">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>rafaellagdh55@gmail.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>(11) 91537-5522</span>
+                        </div>
+                    </div>
+                    <a href="https://www.linkedin.com/in/rafaella-guimaraes-venturini/?locale=pt" target="_blank" rel="noopener noreferrer" class="linkedin-btn">
+                        <i class="fab fa-linkedin"></i>
+                        Conectar no LinkedIn
+                    </a>
+                </div>
+
+                <!-- Membro 4 -->
+                <div class="team-card">
+                    <div class="team-member-name">Jamile de Melo Carvalho</div>
+                    <div class="team-member-role">Marketing</div>
+                    <div class="team-member-contact">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>jamile.carvalho@fbter.org.br</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>(71) 99277-4504</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Membro 5 -->
+                <div class="team-card">
+                    <div class="team-member-name">Julio Cezar Araújo Santos</div>
+                    <div class="team-member-role">Business / Designer</div>
+                    <div class="team-member-contact">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>santos.julio@ufba.br</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>(71) 99198-5100</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
-        <p>© 2025 EcoWake | Hackathon Transpetro | Desenvolvido com 💙 para sustentabilidade marítima</p>
-        <p style="margin-top: 0.5rem; font-size: 0.75rem;">
+        <p>© 2025 EcoWake - Equipe 374 | Hackathon Transpetro</p>
+        <p style="margin-top: 0.5rem;">Desenvolvido com 💙 para sustentabilidade marítima</p>
+        <p style="margin-top: 0.75rem; font-size: 0.75rem;">
             <a href="https://github.com/albertomateus9/ecowake" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-github"></i> GitHub
+            </a>
+            |
+            <a href="https://www.youtube.com/watch?v=Hys0bKIIbQM" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-youtube"></i> Vídeo Pitch
             </a>
         </p>
     </footer>
 
     <script>
-        function hideLoading() {
-            const loading = document.getElementById('loading');
+        function hideLoading(id) {
+            const loading = document.getElementById(id);
             if (loading) {
                 loading.style.display = 'none';
             }
         }
 
-        function toggleFullscreen() {
-            const elem = document.getElementById('dashboard');
+        function toggleFullscreen(elementId) {
+            const elem = document.getElementById(elementId);
             if (!document.fullscreenElement) {
                 elem.requestFullscreen().catch(err => {
                     console.log('Erro ao entrar em tela cheia:', err);
@@ -372,7 +618,7 @@
         }
 
         // Auto-hide loading após 5 segundos (fallback)
-        setTimeout(hideLoading, 5000);
+        setTimeout(() => hideLoading('loading-dashboard'), 5000);
     </script>
 </body>
 </html>
