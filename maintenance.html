@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classificação de Bioincrustação - Em Manutenção | EcoWake</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%232ec4ff'/%3E%3Cstop offset='100%25' style='stop-color:%231bb4ea'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23g)'/%3E%3Cpath d='M20,50 Q30,35 40,50 T60,50 Q70,35 80,50' stroke='white' stroke-width='3' fill='none'/%3E%3Cpath d='M15,60 Q25,45 35,60 T55,60 Q65,45 75,60' stroke='white' stroke-width='2.5' fill='none' opacity='0.7'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f2237 0%, #1a3a4a 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .maintenance-container {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .icon-container {
+            margin-bottom: 2rem;
+        }
+
+        .maintenance-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .maintenance-title {
+            color: #2ec4ff;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2ec4ff, #1bb4ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .maintenance-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .maintenance-message {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .features-list {
+            text-align: left;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(46, 196, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(46, 196, 255, 0.1);
+        }
+
+        .features-list h3 {
+            color: #2ec4ff;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .feature-item i {
+            color: #2ec4ff;
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #2ec4ff, #1bb4ea);
+            color: #0a1a2a;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 196, 255, 0.3);
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(46, 196, 255, 0.5);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            color: #ffa500;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #ffa500;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .contact-info {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .maintenance-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .maintenance-title {
+                font-size: 1.5rem;
+            }
+
+            .maintenance-subtitle {
+                font-size: 1rem;
+            }
+
+            .maintenance-icon {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="maintenance-container">
+        <div class="status-badge">
+            <span class="pulse-dot"></span>
+            <span>Em Desenvolvimento</span>
+        </div>
+
+        <div class="icon-container">
+            <svg class="maintenance-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#2ec4ff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#1bb4ea;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle cx="50" cy="50" r="45" fill="url(#mainGradient)" opacity="0.2"/>
+                <path d="M50,20 L50,50 M50,50 L65,65" stroke="url(#mainGradient)" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="50" cy="50" r="40" stroke="url(#mainGradient)" stroke-width="3" fill="none"/>
+                <path d="M30,80 Q50,75 70,80" stroke="url(#mainGradient)" stroke-width="2" fill="none"/>
+            </svg>
+        </div>
+
+        <h1 class="maintenance-title">
+            Classificador de Bioincrustação
+        </h1>
+
+        <h2 class="maintenance-subtitle">
+            🛠️ Funcionalidade em Desenvolvimento
+        </h2>
+
+        <p class="maintenance-message">
+            O <strong>Classificador Automático de Bioincrustação por Imagem</strong> está sendo 
+            finalizado pela equipe 374. Esta funcionalidade permite identificar o nível de 
+            bioincrustação a partir de uma foto do casco da embarcação.
+        </p>
+
+        <div class="features-list">
+            <h3>
+                <i class="fas fa-robot"></i>
+                Recursos em Desenvolvimento:
+            </h3>
+            <div class="feature-item">
+                <i class="fas fa-check-circle"></i>
+                <span><strong>Upload de Imagens:</strong> Envie fotos do casco para análise instantânea</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-check-circle"></i>
+                <span><strong>IA de Classificação:</strong> Identificação automática do nível de bioincrustação (0-4)</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-check-circle"></i>
+                <span><strong>Validação Cruzada:</strong> Confirma dados do modelo preditivo</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-check-circle"></i>
+                <span><strong>Histórico de Análises:</strong> Acompanhe a evolução ao longo do tempo</span>
+            </div>
+        </div>
+
+        <p class="maintenance-message">
+            <strong>🚀 Previsão de Lançamento:</strong> Fase 2 do Projeto<br>
+            Por enquanto, utilize o <strong>Dashboard Power BI</strong> para acompanhar as 
+            análises e recomendações de manutenção.
+        </p>
+
+        <a href="/" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Voltar ao Dashboard
+        </a>
+
+        <div class="contact-info">
+            <p>
+                <i class="fas fa-envelope"></i> Dúvidas? Entre em contato: 
+                <strong>albertomateus9@yahoo.com</strong>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
