@@ -40,3 +40,7 @@ nginx/ssl/
 # Cache
 __pycache__/
 *.pyc
+
+# JavaScript dependencies
+node_modules/
+frontend-backup/node_modules/
